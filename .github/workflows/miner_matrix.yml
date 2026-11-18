@@ -6,16 +6,17 @@ on:
       target_per_node:
         description: 'Target accounts per node'
         required: true
-        default: '1000'
+        default: '500'
 
 jobs:
   miner_matrix:
     name: Miner Node ${{ matrix.node }}
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
-        node: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        node: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -33,10 +34,11 @@ jobs:
 
       - name: Run Miner Node
         run: |
-          python miner.py ${{ matrix.node }} ${{ github.event.inputs.target_per_node || '1000' }}
+          python miner.py ${{ matrix.node }} ${{ github.event.inputs.target_per_node || '500' }}
 
       - name: Upload Node Dataset Artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: dataset-chunk-node-${{ matrix.node }}
           path: accounts_chunk_node_${{ matrix.node }}.json
